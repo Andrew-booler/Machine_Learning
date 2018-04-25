@@ -14,13 +14,31 @@ public class PerceptronClassifier extends LinearClassifier {
 	 */
 	public void update(double[] x, double y, double alpha) {
 	    // Must be implemented by you
+		for(int i=0;i<this.weights.length;i++) {
+			this.weights[i]+=alpha*(y-threshold(this.dotProduct(this.weights, x)))*x[i];
+		}
 	}
 	
+	public double dotProduct(double[] a, double[] b) {
+		if(a.length!=b.length) {
+			return 0.0;
+		}
+		double res = 0.0;
+		for(int i = 0; i < a.length; i++) {
+			res+=a[i]*b[i];
+		}
+		return res;
+	}
 	/**
 	 * A PerceptronClassifier uses a hard 0/1 threshold.
 	 */
 	public double threshold(double z) {
 	    // Must be implemented by you
+		if(z>0) {
+			return 1.0;
+		}else {
+			return 0.0;
+		}
 	}
 	
 }
