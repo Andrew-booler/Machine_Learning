@@ -28,7 +28,7 @@ public class LogisticClassifier extends LinearClassifier {
 	 */
 	public double threshold(double z) {
 	    // Must be implemented by you
-		return 1/(1+Math.exp(z));
+		return 1/(1+Math.exp(-z));
 	}
 
 }
