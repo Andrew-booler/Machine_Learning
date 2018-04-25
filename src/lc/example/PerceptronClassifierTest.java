@@ -27,14 +27,21 @@ public class PerceptronClassifierTest {
 		System.out.println("nsteps: " + nsteps);
 		System.out.println("alpha: " + alpha);
 		
-		ClassifierDisplay display = new ClassifierDisplay("PerceptronClassifier: " + filename);
+		ClassifierDisplay tr_display = new ClassifierDisplay("PerceptronClassifier: " + filename+"train");
+		ClassifierDisplay te_display = new ClassifierDisplay("PerceptronClassifier: " + filename+"test");
 		List<Example> examples = Data.readFromFile(filename);
 		int ninputs = examples.get(0).inputs.length; 
 		PerceptronClassifier classifier = new PerceptronClassifier(ninputs) {
 			public void trainingReport(List<Example> examples, int stepnum, int nsteps) {
 				double accuracy = accuracy(examples);
 				System.out.println(stepnum + "\t" + accuracy);
-				display.addPoint(stepnum/(double)nsteps, accuracy);
+				tr_display.addPoint(stepnum/(double)nsteps, accuracy);
+			}
+			
+			public void testReport(List<Example> examples, int stepnum, int nsteps) {
+				double oneMinusError = 1.0-squaredErrorPerSample(examples);
+				System.out.println(stepnum + "\t" + oneMinusError);
+				te_display.addPoint(stepnum/(double)nsteps, oneMinusError);
 			}
 		};
 		if (alpha > 0) {

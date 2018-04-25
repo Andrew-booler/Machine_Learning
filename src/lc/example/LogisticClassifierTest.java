@@ -36,6 +36,12 @@ public class LogisticClassifierTest {
 				System.out.println(stepnum + "\t" + oneMinusError);
 				display.addPoint(stepnum/(double)nsteps, oneMinusError);
 			}
+			
+			public void testReport(List<Example> examples, int stepnum, int nsteps) {
+				double oneMinusError = 1.0-squaredErrorPerSample(examples);
+				System.out.println(stepnum + "\t" + oneMinusError);
+				display.addPoint(stepnum/(double)nsteps, oneMinusError);
+			}
 		};
 		if (alpha > 0) {
 			classifier.train(examples, nsteps, alpha);

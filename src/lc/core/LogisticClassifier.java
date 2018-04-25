@@ -6,7 +6,7 @@ import java.lang.Math;
 public class LogisticClassifier extends LinearClassifier {
 	
 	public LogisticClassifier(int ninputs) {
-		super(ninputs);
+		super(ninputs, 1);
 	}
 	
 	/**
@@ -30,5 +30,6 @@ public class LogisticClassifier extends LinearClassifier {
 	    // Must be implemented by you
 		return 1/(1+Math.exp(-z));
 	}
-
+	
+	
 }

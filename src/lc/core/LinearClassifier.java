@@ -17,6 +17,11 @@ abstract public class LinearClassifier {
 		this.weights = new double[ninputs];
 	}
 	
+	public LinearClassifier(int inputs, double upperBound) {
+		this.weights = new Random().doubles(inputs, 0.0, upperBound).toArray();
+		
+	}
+	
 	/**
 	 * Update the weights of this LinearClassifer using the given
 	 * inputs/output example and learning rate alpha.
@@ -52,7 +57,8 @@ abstract public class LinearClassifier {
 			int j = random.nextInt(n);
 			Example ex = examples.get(j);
 			this.update(ex.inputs, ex.output, schedule.alpha(i));
-			this.trainingReport(examples, i,  nsteps);
+			this.trainingReport(examples.subList((int)(examples.size() * 0.5), examples.size()), i, nsteps);
+			this.testReport(examples.subList(0, (int)(examples.size() * 0.5)), i,  nsteps);
 		}
 	}
 
@@ -71,6 +77,10 @@ abstract public class LinearClassifier {
 	 * Subclasses can override it to gather statistics or update displays.
 	 */
 	protected void trainingReport(List<Example> examples, int stepnum, int nsteps) {
+		//System.out.println(stepnum + "\t" + accuracy(examples));
+	}
+	
+	protected void testReport(List<Example> examples, int stepnum, int nsteps) {
 		//System.out.println(stepnum + "\t" + accuracy(examples));
 	}
 	
