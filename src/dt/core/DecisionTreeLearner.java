@@ -65,12 +65,12 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 			if(reminder==reminder) {
 				if(init == true) {
 					if( reminder-maxReminder>0.0) {
-						System.out.println(reminder);
+
 						maxReminder=reminder;
 						res = attr;
 					} 
 				}else{
-					System.out.println(reminder);
+
 					maxReminder=reminder;
 					res = attr;
 					init=true;
