@@ -1,5 +1,6 @@
 package dt.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,17 +28,17 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 	@Override
 	protected DecisionTree learn(Set<Example> examples, List<Variable> attributes, Set<Example> parent_examples) {
 	    // Must be implemented by you; the following two methods may be useful
-		if( examples.isEmpty()) {
+		if(examples.isEmpty()) {
 			return new DecisionTree(this.pluralityValue(parent_examples));
+		}else if(this.uniqueOutputValue(examples) != null) {
+			return new DecisionTree(this.uniqueOutputValue(examples));
+		}else if(attributes.isEmpty()) {
+			return new DecisionTree(this.pluralityValue(examples));
 		}else {
-			if(this.uniqueOutputValue(examples) != null) {
-				return new DecisionTree(this.pluralityValue(examples));
-			}else if(attributes.isEmpty()) {
-				return new DecisionTree(this.pluralityValue(examples));
-			}else {
-				Variable A = this.maxImportance(attributes,examples);
+				Variable A = maxImportance(attributes,examples);
 				DecisionTree tree = new DecisionTree(A);
-				List<Variable> newAttr = attributes;
+				List<Variable> newAttr = new ArrayList<Variable>(attributes);
+				
 				newAttr.remove(A);
 				for( String value : A.domain) {
 					Set<Example> newExamples = this.examplesWithValueForAttribute(examples, A, value);
@@ -45,7 +46,7 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 				}
 				
 				return tree;
-			}
+			
 		}
 	}
 	
@@ -53,20 +54,27 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 		double maxReminder = 0.0;
 		Variable res = null;
 		boolean init = false;
+		int size = examples.size();
 		for(Variable attr : attributes) {
 			double reminder = 0.0;
 			for(String a : attr.domain) {
-				reminder += (double)this.countExamplesWithValueForAttribute(examples, attr, a)/examples.size()*this.reminder(this.examplesWithValueForAttribute(examples, attr, a), attr, a);
+				if(countExamplesWithValueForAttribute(examples, attr, a)!=0)
+					reminder += (double)this.countExamplesWithValueForAttribute(examples, attr, a)/size*this.reminder(this.examplesWithValueForAttribute(examples, attr, a), attr, a);
 			}
-			if(init == true) {
-				if( reminder-maxReminder>0.0) {
+			//System.out.println(reminder);
+			if(reminder==reminder) {
+				if(init == true) {
+					if( reminder-maxReminder>0.0) {
+						System.out.println(reminder);
+						maxReminder=reminder;
+						res = attr;
+					} 
+				}else{
+					System.out.println(reminder);
 					maxReminder=reminder;
 					res = attr;
-				} 
-			}else{
-				maxReminder=reminder;
-				res = attr;
-				init=true;
+					init=true;
+				}
 			}
 		}
 		return res;
@@ -78,8 +86,10 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 		double entropy = 0.0;
 		for(String outValue : this.problem.output.domain) {
 			double p = (double)this.countExamplesWithValueForOutput(examples, outValue)/size;
-			entropy += p*this.log2(p);
+			if(p!=0.0)
+				entropy += p*this.log2(p);
 		}
+		//System.out.println(entropy);
 		return entropy;
 	}
 	
@@ -102,7 +112,7 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 		String res = "";
 		Integer max=0;
 		for (String key : counter.keySet()) {
-			if (counter.get(key)> max) {
+			if (counter.get(key)>= max) {
 				res=key;
 				max=counter.get(key);
 			}
@@ -118,10 +128,10 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 	protected String uniqueOutputValue(Set<Example> examples) {
 	    // Must be implemented by you
 		
-		Example[] eArray = examples.toArray(new Example[0]);
+		Example[] eArray = examples.toArray(new Example[examples.size()]);
 		String uniRes=eArray[0].getOutputValue();
 		for (Example example : examples) {
-			if(example.getOutputValue()!=uniRes) {
+			if(!example.getOutputValue().equals(uniRes)) {
 				return null;
 			}
 		}
