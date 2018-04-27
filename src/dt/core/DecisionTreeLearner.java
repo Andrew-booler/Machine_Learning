@@ -50,27 +50,31 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 		}
 	}
 	
+	//find the attribute with the most information gain
 	private Variable maxImportance(List <Variable> attributes, Set<Example> examples) {
+		//keep the value of the best attribute
 		double maxReminder = 0.0;
 		Variable res = null;
+		//indicate if it is the first attribute
 		boolean init = false;
 		int size = examples.size();
+		//find the attribute with the maximum -remainder
 		for(Variable attr : attributes) {
 			double reminder = 0.0;
+			//calculate the remainder for attr
 			for(String a : attr.domain) {
 				if(countExamplesWithValueForAttribute(examples, attr, a)!=0)
 					reminder += (double)this.countExamplesWithValueForAttribute(examples, attr, a)/size*this.reminder(this.examplesWithValueForAttribute(examples, attr, a), attr, a);
 			}
-			//System.out.println(reminder);
+			
 			if(reminder==reminder) {
 				if(init == true) {
 					if( reminder-maxReminder>0.0) {
-
 						maxReminder=reminder;
 						res = attr;
 					} 
 				}else{
-
+					//for the first attribute, just set it as the best attribute
 					maxReminder=reminder;
 					res = attr;
 					init=true;
@@ -80,6 +84,7 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 		return res;
 	}
 	
+	//calculate the -reminder
 	private double reminder(Set<Example> examples, Variable attribute,String a) {
 		int size = examples.size();
 
@@ -89,7 +94,6 @@ public class DecisionTreeLearner extends AbstractDecisionTreeLearner {
 			if(p!=0.0)
 				entropy += p*this.log2(p);
 		}
-		//System.out.println(entropy);
 		return entropy;
 	}
 	
